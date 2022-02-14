@@ -4,7 +4,7 @@ import { Formik, Form, FormikProps, FieldArray, FormikErrors } from "formik";
 export function View(props: Iprops) {
     return (
         <div>
-            <Formik initialValues={props.form_data}
+            <Formik initialValues={props.initial_values}
                 onSubmit={(values) => props.action_submit(values)}
                 validationSchema={props.validation_schema}
                 onReset={() => props.action_reset()}
@@ -17,35 +17,35 @@ export function View(props: Iprops) {
                                 <div>
                                     {formikProps.values.rows && formikProps.values.rows.length > 0 ? formikProps.values.rows.map((row, index) => (
                                         <div key={index}>
-                                            <input
-                                                name={"rows." + index + ".itemtitle"}
+                                            <input data-testId={`input-title-${index}`}
+                                                name={`rows.${index}.itemtitle`}
                                                 type="text"
-                                                value={row.itemtitle}
+                                                value={row.itemtitle??""}
                                                 onChange={formikProps.handleChange}
                                                 placeholder="Item Title"
                                             />
-                                                {
-                                                    formikProps.errors && formikProps.errors.rows && (formikProps.errors.rows[index] as FormikErrors<IRowData>).itemtitle
-                                                }
-                                            <input
+                                            {
+                                                formikProps.errors && formikProps.errors.rows && (formikProps.errors.rows[index] as FormikErrors<IRowData>).itemtitle
+                                            }
+                                            <input data-testId={`input-price-${index}`}
                                                 name={`rows.${index}.itemPrice`}
                                                 type="number"
-                                                value={row.itemPrice}
+                                                value={row.itemPrice?row.itemPrice:""}
                                                 onChange={formikProps.handleChange}
                                                 placeholder="Item Price"
                                             />
-                                                {
-                                                    formikProps.errors && formikProps.errors.rows && (formikProps.errors.rows[index] as FormikErrors<IRowData>).itemPrice
-                                                }
+                                            {
+                                                formikProps.errors && formikProps.errors.rows && (formikProps.errors.rows[index] as FormikErrors<IRowData>).itemPrice
+                                            }
                                         </div>
-                                    )):(
+                                    )) : (
                                         <span>
                                             Add a new item
                                         </span>
                                     )
                                     }
                                     <div>
-                                        <button type="button" onClick={()=>{
+                                        <button type="button" data-testId="btn-add" onClick={() => {
                                             props.action_submit(formikProps.values)
                                             renderProps.push({})
                                         }}>Add</button>
@@ -53,14 +53,16 @@ export function View(props: Iprops) {
                                 </div>
                             )
                         }}
-                        />
-                        <div>
-                             <button type="reset">Reset</button>
-                        </div>
+                    />
+                    <div>
+                        <button type="reset">Reset</button>
+                    </div>
                 </Form>
                 }
             </Formik>
-            <h4>Sum is:{props.total}</h4>
+            <span data-testId="span-message">
+                <h4>Sum is:{props.total}</h4>
+            </span>
         </div>
     )
 }
